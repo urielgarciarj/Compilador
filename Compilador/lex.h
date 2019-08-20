@@ -2,26 +2,35 @@
 #define LEX_H_INCLUDED
 
 #include <iostream>
+#include <iostream>
 #include <stdio.h>
 #include <string>
-
+#include <cstring>
 
 using namespace std;
+
+
 
 void analizarCadena(string cad);
 
 
 
+
 void analizarCadena(string cad)
 {
-	int longCad = cad.size();
+	const int NUM_PALABRAS_RESERVADAS = 17;
 
-	for (int i = 0; i < longCad; i++)
-	{
+
+	string palabrasReservadas[NUM_PALABRAS_RESERVADAS] = { "if", "for", "while", "do", "switch", "case", "break", "default", "int", "char", "float", "double", "string", "bool", "include", "using", "namespace" };
+
+	int i = 0, cont = 0, j = 0;
+	int longCad = cad.size();
+	bool acep = true, encontroPalabraReservada = false;
+
+
+	
 		switch (cad[i])
 		{
-
-			//LETRAS
 		case 'a':
 		case 'A':
 		case 'b':
@@ -50,8 +59,6 @@ void analizarCadena(string cad)
 		case 'M':
 		case 'n':
 		case 'N':
-		case 'ñ':
-		case 'Ñ':
 		case 'o':
 		case 'O':
 		case 'p':
@@ -76,11 +83,36 @@ void analizarCadena(string cad)
 		case 'Y':
 		case 'z':
 		case 'Z':
-			cout << endl << "Es una letra...";
+		case '_a':
+
+			for (j = 0; j < NUM_PALABRAS_RESERVADAS; j++)
+			{
+
+				if (cad.compare(palabrasReservadas[j]) == 0)
+				{
+					cout << endl << "Es una palabra reservada" << endl;
+					encontroPalabraReservada = true;
+					break;
+				}
+			}
+
+			if (encontroPalabraReservada) {
+				break;
+			}
+			i++;
+			while ((cad[i] >= '0' && cad[i] <= '9' && i < longCad) || (cad[i] >= 'a' && cad[i] <= 'z'))
+			{
+				i++;
+			}
+			if (cad[i] == '+' || cad[i] == '-' || cad[i] == '*' || cad[i] == '/' || cad[i] == '%' || cad[i] == '.' || cad[i] == ',')
+			{
+				acep = false;
+				break;
+			}
+			cout << endl << "Es un identificador...";
 			break;
 
 
-			//NUMEROS
 		case '0':
 		case '1':
 		case '2':
@@ -91,53 +123,136 @@ void analizarCadena(string cad)
 		case '7':
 		case '8':
 		case '9':
-			cout << endl << "Es un numero...";
+			acep = true;
+			cont++;
+			i++;
+			while ((cad[i] >= '0' && cad[i] <= '9' && i < longCad))
+			{
+				i++;
+				cont++;
+			}
+			if (cad[i] == '+' || cad[i] == '-' || cad[i] == '*' || cad[i] == '/' || cad[i] == '%' || cad[i] == '.' || cad[i] == ',' || (cad[i] >= 'a' && cad[i] <= 'z'))
+			{
+				acep = false;
+				break;
+			}
+
+
+			cout << endl << "Es un digito de " << cont << " digitos...";
 			break;
 
-
-			//OPERADORES ARITMETICOS
 		case '+':
 			if (cad[i + 1] == '+')
 			{
-				cout << endl << "Es un operador de incremento ...";
 				i++;
+				if (cad[i + 1] == '\0')
+				{
+					cout << endl << "Es un operador de incremento ...";
+				}
+				else
+				{
+					cout << endl << "qE...";
+					acep = false;
+				}
 			}
 			else if (cad[i + 1] == '=')
 			{
-				cout << endl << "Es un operador de asignacion suma ...";
 				i++;
+				if (cad[i + 1] == '\0')
+				{
+					cout << endl << "Es un operador de asignacion con suma ...";
+				}
+				else
+				{
+					cout << endl << "qE...";
+					acep = false;
+				}
+			}
+			else if (cad[i + 1] == '\0')
+			{
+				cout << endl << "Es un operador de suma...";
 			}
 			else
-				cout << endl << "Es un operador de suma...";
+			{
+				cout << endl << "qE...";
+				acep = false;
+			}
 			break;
 		case '-':
 			if (cad[i + 1] == '-')
 			{
-				cout << endl << "Es un operador de decremento ...";
 				i++;
+				if (cad[i + 1] == '\0')
+				{
+					cout << endl << "Es un operador de asignacion con resta ...";
+				}
+				else
+				{
+					cout << endl << "qE...";
+					acep = false;
+				}
 			}
 			else if (cad[i + 1] == '=')
 			{
-				cout << endl << "Es un operador de asignacion resta ...";
 				i++;
+				if (cad[i + 1] == '\0')
+				{
+					cout << endl << "Es un operador de asignacion con resta ...";
+				}
+				else
+				{
+					cout << endl << "qE...";
+					acep = false;
+				}
+			}
+			else if (cad[i + 1] == '\0')
+			{
+				cout << endl << "Es un operador de resta...";
 			}
 			else
-				cout << endl << "Es un operador de resta...";
+			{
+				cout << endl << "qE...";
+				acep = false;
+			}
 			break;
 		case '*':
 			if (cad[i + 1] == '=')
 			{
-				cout << endl << "Es un operador de asignacion multiplicacion ...";
 				i++;
+				if (cad[i + 1] == '\0')
+				{
+					cout << endl << "Es un operador de asignacion con multiplicacion ...";
+				}
+				else
+				{
+					cout << endl << "qE...";
+					acep = false;
+				}
+			}
+
+			else if (cad[i + 1] == '\0')
+			{
+				cout << endl << "Es un operador de multiplicacion...";
 			}
 			else
-				cout << endl << "Es un operador de multiplicacion...";
+			{
+				cout << endl << "qE...";
+				acep = false;
+			}
 			break;
 		case '/':
 			if (cad[i + 1] == '=')
 			{
-				cout << endl << "Es un operador de asignacion division ...";
 				i++;
+				if (cad[i + 1] == '\0')
+				{
+					cout << endl << "Es un operador de asignacion con division ...";
+				}
+				else
+				{
+					cout << endl << "qE...";
+					acep = false;
+				}
 			}
 			else
 				cout << endl << "Es un operador de division...";
@@ -145,8 +260,16 @@ void analizarCadena(string cad)
 		case '%':
 			if (cad[i + 1] == '=')
 			{
-				cout << endl << "Es un operador de asignacion modulo ...";
 				i++;
+				if (cad[i + 1] == '\0')
+				{
+					cout << endl << "Es un operador de asignacion con Modulo  ...";
+				}
+				else
+				{
+					cout << endl << "qE...";
+					acep = false;
+				}
 			}
 			else
 				cout << endl << "Es un operador de modulo...";
@@ -157,8 +280,16 @@ void analizarCadena(string cad)
 		case '=':
 			if (cad[i + 1] == '=')
 			{
-				cout << endl << "Es una comparacion de igualdad ...";
 				i++;
+				if (cad[i + 1] == '\0')
+				{
+					cout << endl << "Es un operador de Igualdad ...";
+				}
+				else
+				{
+					cout << endl << "qE...";
+					acep = false;
+				}
 			}
 			else
 				cout << endl << "Es un operador de asignacion directa...";
@@ -171,8 +302,16 @@ void analizarCadena(string cad)
 		case '&':
 			if (cad[i + 1] == '&')
 			{
-				cout << endl << "Es un operador de AND ...";
 				i++;
+				if (cad[i + 1] == '\0')
+				{
+					cout << endl << "Es un operador de AND ...";
+				}
+				else
+				{
+					cout << endl << "qE...";
+					acep = false;
+				}
 			}
 			else
 				cout << endl << "Es un caracter especial...";
@@ -181,15 +320,36 @@ void analizarCadena(string cad)
 		case '|':
 			if (cad[i + 1] == '|')
 			{
-				cout << endl << "Es un operador de OR ...";
+
 				i++;
+				if (cad[i + 1] == '\0')
+				{
+					cout << endl << "Es un operador de OR ...";
+				}
+				else
+				{
+					cout << endl << "qE...";
+					acep = false;
+				}
+
+
 			}
 			else
 				cout << endl << "Es un caracter especial...";
 			break;
 
 		case '!':
-			cout << endl << "Es un operador de NOT ...";
+			if (cad[i + 1] == '\0')
+			{
+
+				cout << endl << "Es un operador de NOT ...";
+			}
+			else
+			{
+				cout << endl << "qE...";
+				acep = false;
+			}
+
 			break;
 
 
@@ -202,8 +362,17 @@ void analizarCadena(string cad)
 				cout << endl << "Es un comparador mayor igual que ...";
 				i++;
 			}
-			else
+			else if (cad[i + 1] == '\0')
+			{
 				cout << endl << "Es un comparador mayor que...";
+
+			}
+
+			else
+			{
+				cout << endl << "qE...";
+				acep = false;
+			}
 			break;
 
 		case '<':
@@ -212,13 +381,22 @@ void analizarCadena(string cad)
 				cout << endl << "Es un comparador menor igual que ...";
 				i++;
 			}
-			else
+			else if (cad[i + 1] == '\0')
+			{
+
 				cout << endl << "Es un comparador menor que...";
+			}
+			else
+			{
+				cout << endl << "qE...";
+				acep = false;
+			}
+
 			break;
 
 
 
-			//DELIMITADORES
+			///DELIMITADORES----------------------------------------------
 		case '{':
 			cout << endl << "Es una llave abierta ...";
 			break;
@@ -235,23 +413,16 @@ void analizarCadena(string cad)
 			cout << endl << "Es una parentesis cerrado ...";
 			break;
 
-			// ESPACIO
-		case ' ':
-			cout << endl << "Es un espacio ...";
-			while (cad[i + 1] == ' ') {
-				i++;
 
-			}
-
-
-			break;
-
-			//CARACTERES ESPECIALES
-
+			///CARACTERES ESPECIALES----------------------------------------------------
 		case '_':
+			i++;
+				if (isalpha(cad[i])) {
+					cout << "es un identificador" << endl;
+					break;
+				}
 			cout << endl << "Es un caracter especial ...";
 			break;
-
 		case '$':
 			cout << endl << "Es un caracter especial ...";
 			break;
@@ -284,18 +455,47 @@ void analizarCadena(string cad)
 			cout << endl << "Es un caracter especial ...";
 			break;
 
+			///ESPACIO-----------------------------------------------------------
+		case ' ':
+			cout << endl << "Es un espacio ...";
+			while (cad[i + 1] == ' ') {
+				i++;
+
+			}
+
+
+			break;
 
 		default:
 			cout << endl << "Es una caracter no registrado ...";
 			break;
 
 		}
+	
+
+		if (acep)
+		{
+			cout << endl << endl << "FINALIZO CON EXITO";
+		}
+		else
+		{
+			cout << endl << endl << "ERROR";
+		}
 
 
 	}
 
 
+void generarPalabrasReservadas(string palabrasReservadas[20])
+{
+	palabrasReservadas[0] = "if";
+
+
 }
 
 
+
+
+
 #endif // LEX_H_INCLUDED
+
